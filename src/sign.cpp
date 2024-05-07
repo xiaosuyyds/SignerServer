@@ -8,12 +8,10 @@
 
 #include <thread>
 
-#define _LINUX_PLATFORM_
-// #define _WIN_PLATFORM_
+// #define _LINUX_PLATFORM_
+#define _WIN_PLATFORM_
 
 #define _X64_ARCH_
-
-#define CURRENT_ARCHITECTURE "x64"
 
 #if defined(_WIN_PLATFORM_)
 #include <Windows.h>
@@ -54,7 +52,7 @@ std::map<std::string, uint64_t> addrMap = {
 #endif
 #endif
 
-int SignOffsets = 562; // 562 before 3.1.2-13107, 767 in others
+int SignOffsets = 767; // 562 before 3.1.2-13107, 767 in others
 int ExtraOffsets = 511;
 int TokenOffsets = 255;
 
@@ -97,10 +95,10 @@ void Sign::Init()
 	uint64_t HookAddress = 0;
 #if defined(_WIN_PLATFORM_)
 	HMODULE wrapperModule = GetModuleHandleW(L"wrapper.node");
-	MODULEINFO modInfo;
-	if (wrapperModule == NULL || !GetModuleInformation(GetCurrentProcess(), wrapperModule, &modInfo, sizeof(MODULEINFO)))
-		return;
+	if (wrapperModule == NULL)
+		throw std::runtime_error("Can't find wrapper.node module");
 	HookAddress = reinterpret_cast<uint64_t>(wrapperModule) + addrMap[CURRENT_VERSION];
+	printf("HookAddress: %llx\n", HookAddress);
 #elif defined(_MAC_PLATFORM_)
 	auto pmap = hak::get_maps();
 	do

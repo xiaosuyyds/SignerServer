@@ -40,11 +40,13 @@
             # This is the name of the CMakePresets.json's configuration to build the project.
             buildPreset: 'ninja-${{ matrix.arch }}-release'
 
+        - run: mv build/ninja-${{ matrix.arch }}/libSignerServer.so libSignerServer.so
+
         - name: Upload build
           uses: actions/upload-artifact@v4
           with:
             name: SignerServer-${{ matrix.os }}-${{ matrix.arch }}
             path: |
-              build/ninja-${{ matrix.arch }}/libSignerServer.so
+              libSignerServer.so 
               load.js
               start.sh

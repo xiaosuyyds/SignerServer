@@ -1,8 +1,17 @@
 #include <string>
 #include <tuple>
 
-namespace sign
+class Sign
 {
-    void InitSignCall();
-    std::tuple<std::string, std::string, std::string> CallSign(const std::string_view cmd, const std::string_view src, int seq);
-}
+public:
+    Sign();
+
+private:
+    typedef int (*SignFunctionType)(const char *cmd, const unsigned char *src, size_t src_len, int seq, unsigned char *result);
+    SignFunctionType SignFunction = nullptr;
+    void Init();
+    void InitEx();
+
+public:
+    std::tuple<std::string, std::string, std::string> Call(const std::string_view cmd, const std::string_view src, int seq);
+};

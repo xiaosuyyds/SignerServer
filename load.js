@@ -1,0 +1,1 @@
+require("/opt/QQ/resources/app/wrapper.node");

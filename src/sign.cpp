@@ -6,8 +6,10 @@
 #include <vector>
 #include <map>
 
-// #define _LINUX_PLATFORM_
-#define _WIN_PLATFORM_
+#include <thread>
+
+#define _LINUX_PLATFORM_
+// #define _WIN_PLATFORM_
 
 #define _X64_ARCH_
 
@@ -60,11 +62,12 @@ std::vector<uint8_t> Hex2Bin(std::string_view str)
 	if (str.length() % 2 != 0)
 		throw std::invalid_argument("Hex string length must be even");
 	std::vector<uint8_t> bin(str.size() / 2);
+	std::string extract("00");
 	for (size_t i = 0; i < str.size() / 2; i++)
 	{
-		std::stringstream ss;
-		ss << std::hex << str.substr(i * 2, 2);
-		ss >> bin[i];
+		extract[0] = str[2 * i];
+		extract[1] = str[2 * i + 1];
+		bin[i] = std::stoi(extract, nullptr, 16);
 	}
 	return bin;
 }
@@ -82,10 +85,13 @@ std::string Bin2Hex(const uint8_t *ptr, size_t length)
 	return str;
 }
 
-typedef int (*SignFunctionType)(const char *cmd, const unsigned char *src, size_t src_len, int seq, unsigned char *result);
-SignFunctionType SignFunction = nullptr;
+Sign::Sign()
+{
+	std::thread t(&Sign::InitEx, this);
+	t.detach();
+}
 
-void sign::InitSignCall()
+void Sign::Init()
 {
 	uint64_t HookAddress = 0;
 #if defined(_WIN_PLATFORM_)
@@ -124,7 +130,22 @@ void sign::InitSignCall()
 	SignFunction = reinterpret_cast<SignFunctionType>(HookAddress);
 }
 
-std::tuple<std::string, std::string, std::string> sign::CallSign(const std::string_view cmd, const std::string_view src, int seq)
+void Sign::InitEx()
+{
+	while (true)
+		try
+		{
+			Init();
+			break;
+		}
+		catch (const std::exception &e)
+		{
+			std::cerr << e.what() << '\n';
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
+}
+
+std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_view cmd, const std::string_view src, int seq)
 {
 	if (SignFunction == nullptr)
 		throw std::runtime_error("Sign function not initialized");

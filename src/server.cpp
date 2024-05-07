@@ -1,8 +1,11 @@
-#include "server.h"
 #include "sign.h"
-#include "../include/mongoose/mongoose.h"
+#include "server.h"
 #include "../include/rapidjson/document.h"
 #include "../include/rapidjson/writer.h"
+
+#include <thread>
+
+Sign sign;
 
 // HTTP server event handler function
 void ev_handler(struct mg_connection *c, int ev, void *ev_data)
@@ -21,7 +24,7 @@ void ev_handler(struct mg_connection *c, int ev, void *ev_data)
                 std::string_view src = doc["src"].GetString();
                 int seq = doc["seq"].GetInt64();
 
-                auto [signDataHex, extraDataHex, tokenDataHex] = sign::CallSign(cmd, src, seq);
+                auto [signDataHex, extraDataHex, tokenDataHex] = sign.Call(cmd, src, seq);
 
                 // Construct response
                 rapidjson::StringBuffer buffer;
@@ -55,14 +58,21 @@ void ev_handler(struct mg_connection *c, int ev, void *ev_data)
     }
 }
 
-void server::init(int port)
+Server::Server(int port)
 {
     char url[32];
     snprintf(url, sizeof(url), "http://0.0.0.0:%d", port);
 
-    struct mg_mgr mgr;                                             // Declare event manager
-    mg_mgr_init(&mgr);                                             // Initialise event manager
+    mg_mgr_init(&mgr);                           // Initialise event manager
     mg_http_listen(&mgr, url, ev_handler, NULL); // Setup listener
+
+    // new thread to loop
+    std::thread t(&Server::Loop, this);
+    t.detach();
+}
+
+void Server::Loop()
+{
     for (;;)
     { // Run an infinite event loop
         mg_mgr_poll(&mgr, 1000);

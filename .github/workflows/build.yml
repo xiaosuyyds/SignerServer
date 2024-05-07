@@ -45,6 +45,6 @@
           with:
             name: SignerServer-${{ matrix.os }}-${{ matrix.arch }}
             path: |
-              build/ninja-${{ matrix.arch }}/lib/libSignerServer.so
+              build/ninja-${{ matrix.arch }}/libSignerServer.so
               load.js
               start.sh

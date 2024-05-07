@@ -1,4 +1,4 @@
-#include "../include/mongoose/mongoose.h"
+#include "../include/cpp-httplib/httplib.h"
 
 class Server
 {
@@ -6,8 +6,5 @@ public:
     Server(int port);
 
 private:
-    struct mg_mgr mgr; // Declare event manager
-
-private:
-    void Loop();
+    httplib::Server svr;
 };

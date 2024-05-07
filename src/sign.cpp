@@ -45,7 +45,7 @@ std::map<std::string, uint64_t> addrMap = {
 	{"6.9.20-17153", 0x1c73dd0}};
 #endif
 #elif defined(_LINUX_PLATFORM_)
-#define CURRENT_VERSION "3.2.7-23361"
+#define CURRENT_VERSION "3.1.2-13107"
 #if defined(_X64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"3.1.2-12912", 0x33C38E0},
@@ -53,7 +53,7 @@ std::map<std::string, uint64_t> addrMap = {
 	{"3.2.7-23361", 0x4C93C57}};
 #endif
 #endif
-int SignOffsets = 767; // 562 in 3.1.2-12912
+int SignOffsets = 562; // 562 in 3.1.2-12912
 int ExtraOffsets = 511;
 int TokenOffsets = 255;
 
@@ -150,9 +150,9 @@ std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_v
 	if (SignFunction == nullptr)
 		throw std::runtime_error("Sign function not initialized");
 
-	printf("cmd: %s\n", cmd.data());
-	printf("src: %s\n", src.data());
-	printf("seq: %d\n", seq);
+	// printf("cmd: %s\n", cmd.data());
+	// printf("src: %s\n", src.data());
+	// printf("seq: %d\n", seq);
 
 	const std::vector<uint8_t> signArgSrc = Hex2Bin(src);
 
@@ -161,15 +161,11 @@ std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_v
 
 	SignFunction(cmd.data(), signArgSrc.data(), signArgSrc.size(), seq, signResult);
 
-	printf("signResult: %s\n", Bin2Hex(signResult, resultSize).c_str());
+	// printf("signResult: %s\n", Bin2Hex(signResult, resultSize).c_str());
 
-	// 获取大小
-	uint32_t signSizeU32 = *(signResult + SignOffsets);
-	uint32_t extraSizeU32 = *(signResult + ExtraOffsets);
-	uint32_t tokenSizeU32 = *(signResult + TokenOffsets);
-	std::string signDataHex = Bin2Hex(signResult + 512, signSizeU32);
-	std::string extraDataHex = Bin2Hex(signResult + 256, extraSizeU32);
-	std::string tokenDataHex = Bin2Hex(signResult, tokenSizeU32);
+	std::string signDataHex = Bin2Hex(signResult + 512, *(signResult + SignOffsets));
+	std::string extraDataHex = Bin2Hex(signResult + 256, *(signResult + ExtraOffsets));
+	std::string tokenDataHex = Bin2Hex(signResult, *(signResult + TokenOffsets));
 
 	return std::make_tuple(signDataHex, extraDataHex, tokenDataHex);
 }

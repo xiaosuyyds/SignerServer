@@ -19,8 +19,8 @@
 #include <Windows.h>
 #include <psapi.h>
 #elif defined(_MAC_PLATFORM_) || defined(_LINUX_PLATFORM_)
-#include <cstring>
 #include "proc_maps.h"
+#include <cstring>
 #endif
 
 // 签名函数定义
@@ -53,7 +53,8 @@ std::map<std::string, uint64_t> addrMap = {
 	{"3.2.7-23361", 0x4C93C57}};
 #endif
 #endif
-int SignOffsets = 562; // 562 in 3.1.2-12912
+
+int SignOffsets = 562; // 562 before 3.1.2-13107, 767 in others
 int ExtraOffsets = 511;
 int TokenOffsets = 255;
 

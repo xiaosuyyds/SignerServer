@@ -1,3 +1,4 @@
+#include "sign.h"
 #include "../include/cpp-httplib/httplib.h"
 
 class Server
@@ -7,4 +8,5 @@ public:
 
 private:
     httplib::Server svr;
+    Sign sign;
 };

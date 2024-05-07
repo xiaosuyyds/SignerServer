@@ -1,15 +1,13 @@
-#include "sign.h"
 #include "server.h"
 #include "../include/rapidjson/document.h"
 #include "../include/rapidjson/writer.h"
 
 #include <thread>
 
-Sign sign;
 
 Server::Server(int port)
 {
-    svr.Post("/sign", [](const httplib::Request &req, httplib::Response &res)
+    svr.Post("/sign", [this](const httplib::Request &req, httplib::Response &res)
              { 
         try
         {

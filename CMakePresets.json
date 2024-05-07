@@ -1,0 +1,33 @@
+{
+    "version": 2,
+    "configurePresets": [
+        {
+            "name": "ninja-x64",
+            "displayName": "Configure ninja-x64",
+            "description": "Configure ninja-x64",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ninja-x64-debug",
+            "description": "Build ninja-x64 Debug",
+            "displayName": "Build ninja-x64 Debug",
+            "configurePreset": "ninja-x64",
+            "configuration": "Debug",
+            "targets": "all"
+        },
+        {
+            "name": "ninja-x64-release",
+            "description": "Build ninja-x64 Release",
+            "displayName": "Build ninja-x64 Release",
+            "configurePreset": "ninja-x64",
+            "configuration": "Release",
+            "targets": "all"
+        }
+    ]
+}

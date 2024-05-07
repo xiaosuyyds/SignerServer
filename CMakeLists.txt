@@ -21,7 +21,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB SOURCE_FILES "./src/*.cpp" "./src/*.asm")
 
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+add_library(SignerServer SHARED ${SOURCE_FILES})
 
 if(MSVC)
     target_link_options(SignerServer PRIVATE

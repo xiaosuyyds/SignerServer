@@ -4,5 +4,5 @@
 namespace sign
 {
     void InitSignCall();
-    std::tuple<std::string, std::string, std::string> CallSign(const std::string cmd, const std::string src, const int seq);
+    std::tuple<std::string, std::string, std::string> CallSign(const std::string_view cmd, const std::string_view src, int seq);
 }

@@ -5,6 +5,8 @@ project(SignerServer)
 # 平台宏定义
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     add_definitions(-D _WIN_PLATFORM_)
+
+    link_libraries(ws2_32)
 elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
     add_definitions(-D _MAC_PLATFORM_)
 elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
@@ -18,4 +20,4 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB SOURCE_FILES "./src/*.cpp")
 
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} "./include/mongoose/mongoose.c")

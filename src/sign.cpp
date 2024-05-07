@@ -51,11 +51,11 @@ std::map<std::string, uint64_t> addrMap = {
 	{"3.2.7-23361", 0x4C93C57}};
 #endif
 #endif
-int signOffsets = 767; // 562 in 3.1.2-12912
+int SignOffsets = 767; // 562 in 3.1.2-12912
 int ExtraOffsets = 511;
 int TokenOffsets = 255;
 
-std::vector<uint8_t> Hex2Bin(std::string str)
+std::vector<uint8_t> Hex2Bin(std::string_view str)
 {
 	if (str.length() % 2 != 0)
 		throw std::invalid_argument("Hex string length must be even");
@@ -82,7 +82,7 @@ std::string Bin2Hex(const uint8_t *ptr, size_t length)
 	return str;
 }
 
-typedef int (*SignFunctionType)(const char *cmd, const char *src, size_t src_len, int seq, unsigned char *result);
+typedef int (*SignFunctionType)(const char *cmd, const unsigned char *src, size_t src_len, int seq, unsigned char *result);
 SignFunctionType SignFunction = nullptr;
 
 void sign::InitSignCall()
@@ -124,45 +124,31 @@ void sign::InitSignCall()
 	SignFunction = reinterpret_cast<SignFunctionType>(HookAddress);
 }
 
-std::tuple<std::string, std::string, std::string> sign::CallSign(const std::string cmd, const std::string src, const int seq)
+std::tuple<std::string, std::string, std::string> sign::CallSign(const std::string_view cmd, const std::string_view src, int seq)
 {
 	if (SignFunction == nullptr)
 		throw std::runtime_error("Sign function not initialized");
 
-	char *signArgCmd = new char[1024];
-	char *signArgSrc = new char[1024];
-	int32_t signSrc = 0;
-	int32_t signSeq = 0;
-	uint8_t *signResult = new uint8_t[1024];
-	// 设置最大长度
-	size_t str_size = 1024;
+	printf("cmd: %s\n", cmd.data());
+	printf("src: %s\n", src.data());
+	printf("seq: %d\n", seq);
 
-	printf("signArgCmd: %s\n", signArgCmd);
-	printf("signArgSrc: %s\n", signArgSrc);
-	printf("signSrc: %d\n", signSrc);
-	printf("signSeq: %d\n", signSeq);
+	const std::vector<uint8_t> signArgSrc = Hex2Bin(src);
 
-	SignFunction(signArgCmd, signArgSrc, signSrc, signSeq, signResult);
+	size_t resultSize = 1024;
+	uint8_t *signResult = new uint8_t[resultSize];
 
-	printf("signResult: %s\n", Bin2Hex(signResult, 1024).c_str());
+	SignFunction(cmd.data(), signArgSrc.data(), signArgSrc.size(), seq, signResult);
+
+	printf("signResult: %s\n", Bin2Hex(signResult, resultSize).c_str());
 
 	// 获取大小
-	uint8_t *signSize = (uint8_t *)signResult + signOffsets;
-	uint8_t *extraSize = (uint8_t *)signResult + ExtraOffsets;
-	uint8_t *tokenSize = (uint8_t *)signResult + TokenOffsets;
-	// 读取
-	uint32_t signSizeU32 = *signSize;
-	uint32_t extraSizeU32 = *extraSize;
-	uint32_t tokenSizeU32 = *tokenSize;
-	uint8_t *signData = signResult + 512;
-	uint8_t *extraData = signResult + 256;
-	uint8_t *tokenData = signResult;
-	std::string signDataHex = Bin2Hex(signData, signSizeU32);
-	std::string extraDataHex = Bin2Hex(extraData, extraSizeU32);
-	std::string tokenDataHex = Bin2Hex(tokenData, tokenSizeU32);
-	// 回收资源
-	delete[] signArgCmd;
-	delete[] signArgSrc;
-	delete[] signResult;
+	uint32_t signSizeU32 = *(signResult + SignOffsets);
+	uint32_t extraSizeU32 = *(signResult + ExtraOffsets);
+	uint32_t tokenSizeU32 = *(signResult + TokenOffsets);
+	std::string signDataHex = Bin2Hex(signResult + 512, signSizeU32);
+	std::string extraDataHex = Bin2Hex(signResult + 256, extraSizeU32);
+	std::string tokenDataHex = Bin2Hex(signResult, tokenSizeU32);
+
 	return std::make_tuple(signDataHex, extraDataHex, tokenDataHex);
 }

@@ -9,7 +9,7 @@
 #include <thread>
 
 // #define _LINUX_PLATFORM_
-#define _WIN_PLATFORM_
+// #define _WIN_PLATFORM_
 
 #define _X64_ARCH_
 

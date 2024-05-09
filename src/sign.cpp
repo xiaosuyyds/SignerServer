@@ -95,17 +95,15 @@ void Sign::Init()
 	uint64_t HookAddress = 0;
 #if defined(_WIN_PLATFORM_)
 	HMODULE wrapperModule = GetModuleHandleW(L"wrapper.node");
-	if (wrapperModule == NULL)
-		throw std::runtime_error("Can't find wrapper.node module");
+	if (wrapperModule == NULL) {
+        throw std::runtime_error("Can't find wrapper.node module");
+    }
 	HookAddress = reinterpret_cast<uint64_t>(wrapperModule) + addrMap[CURRENT_VERSION];
 	printf("HookAddress: %llx\n", HookAddress);
 #elif defined(_MAC_PLATFORM_)
 	auto pmap = hak::get_maps();
-	do
-	{
-		// printf("start: %llx, end: %llx, offset: %x, module_name: %s\n", pmap->start(), pmap->end(), pmap->offset, pmap->module_name.c_str());
-		if (pmap->module_name.find("wrapper.node") != std::string::npos && pmap->offset == 0)
-		{
+	do {
+		if (pmap->module_name.find("wrapper.node") != std::string::npos && pmap->offset == 0) {
 			HookAddress = pmap->start() + addrMap[CURRENT_VERSION];
 			printf("HookAddress: %llx\n", HookAddress);
 			break;
@@ -113,45 +111,39 @@ void Sign::Init()
 	} while ((pmap = pmap->next()) != nullptr);
 #elif defined(_LINUX_PLATFORM_)
 	auto pmap = hak::get_maps();
-	do
-	{
-		// printf("start: %lx, end: %lx, offset: %x, module_name: %s\n", pmap->start(), pmap->end(), pmap->offset, pmap->module_name.c_str());
-		if (pmap->module_name.find("wrapper.node") != std::string::npos && pmap->offset == 0)
-		{
+	do {
+		if (pmap->module_name.find("wrapper.node") != std::string::npos && pmap->offset == 0) {
 			HookAddress = pmap->start() + addrMap[CURRENT_VERSION];
 			printf("HookAddress: %lx\n", HookAddress);
 			break;
 		}
 	} while ((pmap = pmap->next()) != nullptr);
 #endif
-	if (HookAddress == 0)
-		throw std::runtime_error("Can't find hook address");
+	if (HookAddress == 0) {
+        throw std::runtime_error("Can't find hook address");
+    }
 	SignFunction = reinterpret_cast<SignFunctionType>(HookAddress);
 }
 
 void Sign::InitEx()
 {
-	while (true)
-		try
-		{
-			Init();
-			break;
-		}
-		catch (const std::exception &e)
-		{
-			std::cerr << e.what() << '\n';
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-		}
+	while (true) {
+        try {
+            Init();
+            break;
+        }
+        catch (const std::exception &e) {
+            std::cerr << e.what() << '\n';
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    }
 }
 
 std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_view cmd, const std::string_view src, int seq)
 {
-	if (SignFunction == nullptr)
-		throw std::runtime_error("Sign function not initialized");
-
-	// printf("cmd: %s\n", cmd.data());
-	// printf("src: %s\n", src.data());
-	// printf("seq: %d\n", seq);
+	if (SignFunction == nullptr) {
+        throw std::runtime_error("Sign function not initialized");
+    }
 
 	const std::vector<uint8_t> signArgSrc = Hex2Bin(src);
 
@@ -159,8 +151,6 @@ std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_v
 	uint8_t *signResult = new uint8_t[resultSize];
 
 	SignFunction(cmd.data(), signArgSrc.data(), signArgSrc.size(), seq, signResult);
-
-	// printf("signResult: %s\n", Bin2Hex(signResult, resultSize).c_str());
 
 	std::string signDataHex = Bin2Hex(signResult + 512, *(signResult + SignOffsets));
 	std::string extraDataHex = Bin2Hex(signResult + 256, *(signResult + ExtraOffsets));

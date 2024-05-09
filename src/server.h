@@ -9,4 +9,5 @@ public:
 private:
     httplib::Server svr;
     Sign sign;
+    static std::string ConstructResponse(const std::string &sign, const std::string &extra, const std::string &token);
 };

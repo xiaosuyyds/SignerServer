@@ -19,6 +19,10 @@
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
+            },
+            "architecture": {
+                "value": "arm64",
+                "strategy": "set"
             }
         },
         {
@@ -38,7 +42,7 @@
     ],
     "buildPresets": [
         {
-            "name":"ninja-arm64-debug",
+            "name": "ninja-arm64-debug",
             "description": "Build ninja-arm64 Debug",
             "displayName": "Build ninja-arm64 Debug",
             "configurePreset": "ninja-arm64",

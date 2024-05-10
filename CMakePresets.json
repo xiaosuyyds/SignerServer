@@ -2,27 +2,13 @@
     "version": 2,
     "configurePresets": [
         {
-            "name": "ninja-x64",
-            "displayName": "Configure ninja-x64",
-            "description": "Configure ninja-x64",
+            "name": "ninja",
+            "displayName": "Configure ninja",
+            "description": "Configure ninja",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
-            }
-        },
-        {
-            "name": "ninja-arm64",
-            "displayName": "Configure ninja-arm64",
-            "description": "Configure ninja-arm64",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
-            },
-            "architecture": {
-                "value": "arm64",
-                "strategy": "set"
             }
         },
         {
@@ -42,34 +28,18 @@
     ],
     "buildPresets": [
         {
-            "name": "ninja-arm64-debug",
-            "description": "Build ninja-arm64 Debug",
-            "displayName": "Build ninja-arm64 Debug",
-            "configurePreset": "ninja-arm64",
+            "name": "ninja-debug",
+            "description": "Build ninja Debug",
+            "displayName": "Build ninja Debug",
+            "configurePreset": "ninja",
             "configuration": "Debug",
             "targets": "all"
         },
         {
-            "name": "ninja-arm64-release",
-            "description": "Build ninja-arm64 Release",
-            "displayName": "Build ninja-arm64 Release",
-            "configurePreset": "ninja-arm64",
-            "configuration": "Release",
-            "targets": "all"
-        },
-        {
-            "name": "ninja-x64-debug",
-            "description": "Build ninja-x64 Debug",
-            "displayName": "Build ninja-x64 Debug",
-            "configurePreset": "ninja-x64",
-            "configuration": "Debug",
-            "targets": "all"
-        },
-        {
-            "name": "ninja-x64-release",
-            "description": "Build ninja-x64 Release",
-            "displayName": "Build ninja-x64 Release",
-            "configurePreset": "ninja-x64",
+            "name": "ninja-release",
+            "description": "Build ninja Release",
+            "displayName": "Build ninja Release",
+            "configurePreset": "ninja",
             "configuration": "Release",
             "targets": "all"
         },

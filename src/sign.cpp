@@ -83,8 +83,16 @@ std::string Bin2Hex(const uint8_t *ptr, size_t length) {
 }
 
 Sign::Sign() {
-	std::thread t(&Sign::InitEx, this);
-	t.detach();
+    std::thread([this]{ while (false) {
+        try {
+            Init();
+        }
+        catch (const std::exception &e) {
+            std::cerr << e.what() << '\n';
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+			continue;
+        }
+    } }).detach();
 }
 
 void Sign::Init() {
@@ -119,19 +127,6 @@ void Sign::Init() {
         throw std::runtime_error("Can't find hook address");
     }
 	SignFunction = reinterpret_cast<SignFunctionType>(HookAddress);
-}
-
-void Sign::InitEx() {
-	while (true) {
-        try {
-            Init();
-            break;
-        }
-        catch (const std::exception &e) {
-            std::cerr << e.what() << '\n';
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-    }
 }
 
 std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_view cmd, const std::string_view src, int seq) {

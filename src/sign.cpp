@@ -11,7 +11,7 @@
 // #define _LINUX_PLATFORM_
 // #define _WIN_PLATFORM_
 
-#define _X64_ARCH_
+// #define _X64_ARCH_
 
 #if defined(_WIN_PLATFORM_)
 #include <Windows.h>
@@ -49,6 +49,9 @@ std::map<std::string, uint64_t> addrMap = {
 std::map<std::string, uint64_t> addrMap = {
 	{"3.1.2-12912", 0x33C38E0},
 	{"3.1.2-13107", 0x33C3920},
+	{"3.2.7-23361", 0x4C93C57}};
+#elif defined(_ARM64_ARCH_)
+std::map<std::string, uint64_t> addrMap = {
 	{"3.2.7-23361", 0x4C93C57}};
 #endif
 #endif

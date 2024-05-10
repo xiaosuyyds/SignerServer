@@ -16,6 +16,13 @@ elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     add_definitions(-D _LINUX_PLATFORM_)
 endif()
 
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "IA64")
+    add_definitions(-D _X64_ARCH_)
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86")
+    add_definitions(-D _X86_ARCH_)
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
+    add_definitions(-D _ARM64_ARCH_)
+endif()
 
 file(GLOB SOURCE_FILES "./src/*.cpp" "./src/*.asm")
 

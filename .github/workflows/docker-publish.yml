@@ -1,7 +1,13 @@
+# https://docs.github.com/en/actions/learn-github-actions/contexts
+
 name: docker-publish
 
 on:
   workflow_dispatch:
+
+env:
+  DOCKER_REPO: simplxs/signerserver
+  GITHUB_REPO: Simplxss/SignerServer
 
 jobs:
   publish-dockerhub:
@@ -21,11 +27,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       # Fork from https://github.com/koishijs/boilerplate/blob/master/.github/workflows/docker.yml
       - name: Run buildx and push
-        env:
-          DOCKER_REPO: mlikiowa/napcat-docker
-          GITHUB_REPO: NapNeko/NapCatQQ
         run: |
-          TAG=$(curl "https://api.github.com/repos/NapNeko/NapCatQQ/releases/latest" | jq -r '.tag_name')
+          TAG=$(curl "https://api.github.com/repos/${GITHUB_REPO}/releases/latest" | jq -r '.tag_name')
           docker buildx build \
             --output "type=image,push=true" \
             --platform linux/amd64,linux/arm64 \
@@ -34,5 +37,4 @@ jobs:
             --file ./Dockerfile \
             .
       - name: Docker Hub logout
-        if: always()
         run: docker logout

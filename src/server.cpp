@@ -4,9 +4,26 @@
 
 #include <thread>
 
+std::string ConstructResponse(const std::string &sign, const std::string &extra, const std::string &token) {
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 
-Server::Server(int port)
-{
+    writer.StartObject();
+    writer.Key("value");
+    writer.StartObject();
+    writer.Key("sign");
+    writer.String(sign.c_str());
+    writer.Key("extra");
+    writer.String(extra.c_str());
+    writer.Key("token");
+    writer.String(token.c_str());
+    writer.EndObject();
+    writer.EndObject();
+
+    return buffer.GetString();
+}
+
+Server::Server(int port) {
     std::atomic<uint64_t> counter(0);
 
     svr.Post("/sign", [this, &counter](const httplib::Request &req, httplib::Response &res)
@@ -77,23 +94,4 @@ Server::Server(int port)
     });
 
     std::thread([this, port]{ svr.listen("0.0.0.0", port); }).detach();
-}
-
-std::string Server::ConstructResponse(const std::string &sign, const std::string &extra, const std::string &token) {
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-
-    writer.StartObject();
-    writer.Key("value");
-    writer.StartObject();
-    writer.Key("sign");
-    writer.String(sign.c_str());
-    writer.Key("extra");
-    writer.String(extra.c_str());
-    writer.Key("token");
-    writer.String(token.c_str());
-    writer.EndObject();
-    writer.EndObject();
-
-    return buffer.GetString();
 }

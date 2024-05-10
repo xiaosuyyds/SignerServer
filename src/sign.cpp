@@ -56,14 +56,13 @@ int SignOffsets = 767; // 562 before 3.1.2-13107, 767 in others
 int ExtraOffsets = 511;
 int TokenOffsets = 255;
 
-std::vector<uint8_t> Hex2Bin(std::string_view str)
-{
-	if (str.length() % 2 != 0)
-		throw std::invalid_argument("Hex string length must be even");
+std::vector<uint8_t> Hex2Bin(std::string_view str) {
+	if (str.length() % 2 != 0) {
+        throw std::invalid_argument("Hex string length must be even");
+    }
 	std::vector<uint8_t> bin(str.size() / 2);
 	std::string extract("00");
-	for (size_t i = 0; i < str.size() / 2; i++)
-	{
+	for (size_t i = 0; i < str.size() / 2; i++) {
 		extract[0] = str[2 * i];
 		extract[1] = str[2 * i + 1];
 		bin[i] = std::stoi(extract, nullptr, 16);
@@ -71,27 +70,23 @@ std::vector<uint8_t> Hex2Bin(std::string_view str)
 	return bin;
 }
 
-std::string Bin2Hex(const uint8_t *ptr, size_t length)
-{
+std::string Bin2Hex(const uint8_t *ptr, size_t length) {
 	const char table[] = "0123456789ABCDEF";
 	std::string str;
 	str.resize(length * 2);
-	for (size_t i = 0; i < length; ++i)
-	{
+	for (size_t i = 0; i < length; ++i) {
 		str[2 * i] = table[ptr[i] / 16];
 		str[2 * i + 1] = table[ptr[i] % 16];
 	}
 	return str;
 }
 
-Sign::Sign()
-{
+Sign::Sign() {
 	std::thread t(&Sign::InitEx, this);
 	t.detach();
 }
 
-void Sign::Init()
-{
+void Sign::Init() {
 	uint64_t HookAddress = 0;
 #if defined(_WIN_PLATFORM_)
 	HMODULE wrapperModule = GetModuleHandleW(L"wrapper.node");
@@ -125,8 +120,7 @@ void Sign::Init()
 	SignFunction = reinterpret_cast<SignFunctionType>(HookAddress);
 }
 
-void Sign::InitEx()
-{
+void Sign::InitEx() {
 	while (true) {
         try {
             Init();
@@ -139,8 +133,7 @@ void Sign::InitEx()
     }
 }
 
-std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_view cmd, const std::string_view src, int seq)
-{
+std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_view cmd, const std::string_view src, int seq) {
 	if (SignFunction == nullptr) {
         throw std::runtime_error("Sign function not initialized");
     }
@@ -148,7 +141,7 @@ std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_v
 	const std::vector<uint8_t> signArgSrc = Hex2Bin(src);
 
 	size_t resultSize = 1024;
-	uint8_t *signResult = new uint8_t[resultSize];
+	auto *signResult = new uint8_t[resultSize];
 
 	SignFunction(cmd.data(), signArgSrc.data(), signArgSrc.size(), seq, signResult);
 

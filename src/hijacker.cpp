@@ -4,10 +4,8 @@
 
 bool TlsOnce = false;
 // this runs way before dllmain
-void __stdcall TlsCallback(PVOID hModule, DWORD fdwReason, PVOID pContext)
-{
-	if (!TlsOnce)
-	{
+void __stdcall TlsCallback(PVOID hModule, DWORD fdwReason, PVOID pContext) {
+	if (!TlsOnce) {
 		// for version.dll proxy
 		// load exports as early as possible
 		Exports::Load();

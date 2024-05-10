@@ -25,7 +25,6 @@ inline std::vector<std::string> ExportNames_version = {
 		"VerQueryValueW"
 };
 
-namespace Exports
-{
+namespace Exports {
 	void Load();
 }

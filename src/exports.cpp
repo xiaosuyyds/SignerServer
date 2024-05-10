@@ -5,8 +5,7 @@
 
 FARPROC OriginalFuncs_version[17];
 
-void Exports::Load()
-{
+void Exports::Load() {
 	char szSystemDirectory[MAX_PATH]{};
 	GetSystemDirectoryA(szSystemDirectory, MAX_PATH);
 
@@ -15,15 +14,16 @@ void Exports::Load()
 
 	HMODULE version = LoadLibraryA(OriginalPath.c_str());
 	// load version.dll from system32
-	if (!version)
-		throw std::runtime_error("Failed to load version.dll from system32\n");
+	if (!version) {
+        throw std::runtime_error("Failed to load version.dll from system32\n");
+    }
 
 	// get addresses of original functions
-	for (int i = 0; i < 17; i++)
-	{
+	for (int i = 0; i < 17; i++) {
 		OriginalFuncs_version[i] = GetProcAddress(version, ExportNames_version[i].c_str());
-		if (!OriginalFuncs_version[i])
-			throw std::runtime_error("Failed to get address of " + ExportNames_version[i] + "\n");
+		if (!OriginalFuncs_version[i]) {
+            throw std::runtime_error("Failed to get address of " + ExportNames_version[i] + "\n");
+        }
 	}
 }
 #endif

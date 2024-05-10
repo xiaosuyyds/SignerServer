@@ -1,13 +1,64 @@
 const path = require('node:path');
-const fs = require('node:fs');
 const os = require('node:os');
 
 const exePath = path.dirname(process.execPath);
 
+var QQWrapper;
+const qqPkgInfo = require(path.join(exePath, "resources/app/package.json"));
+var appid;
+var qua;
 if (os.platform() === "win32") {
-    let configVersionInfoPath = path.join(exePath, "resources/app/versions/config.json");
-    const qqVersionConfigInfo = JSON.parse(fs.readFileSync(configVersionInfoPath).toString());
-    require(path.join(exePath, "resources/app/versions", qqVersionConfigInfo.curVersion, "wrapper.node"));
+    QQWrapper = require(path.join(exePath, "resources/app/versions", qqPkgInfo.version, "wrapper.node"));
+    appid = "537213803";
+    qua = `V1_WIN_NQ_${qqVersionConfigInfo.curVersion.replace("-", "_")}_GW_B`;
 } else {
-    require(path.join(exePath, "resources/app/wrapper.node"));
+    QQWrapper = require(path.join(exePath, "resources/app/wrapper.node"));
+    appid = "537213827";
+    qua = qqPkgInfo.qua;
 }
+
+class GlobalAdapter {
+    onLog(...args) {
+    }
+    onGetSrvCalTime(...args) {
+    }
+    onShowErrUITips(...args) {
+    }
+    fixPicImgType(...args) {
+    }
+    getAppSetting(...args) {
+    }
+    onInstallFinished(...args) {
+    }
+    onUpdateGeneralFlag(...args) {
+    }
+    onGetOfflineMsg(...args) {
+    }
+}
+
+const dataPathGlobal = "/root"
+
+const engine = new QQWrapper.NodeIQQNTWrapperEngine();
+engine.initWithDeskTopConfig({
+    base_path_prefix: "",
+    platform_type: 3,
+    app_type: 4,
+    app_version: qqPkgInfo.version,
+    os_version: os.release(),
+    use_xlog: true,
+    qua: qua,
+    global_path_config: {
+        desktopGlobalPath: dataPathGlobal
+    },
+    thumb_config: { maxSide: 324, minSide: 48, longLimit: 6, density: 2 }
+}, new QQWrapper.NodeIGlobalAdapter(new GlobalAdapter()));
+
+const loginService = new QQWrapper.NodeIKernelLoginService();
+loginService.initConfig({
+    machineId: "",
+    appid: appid,
+    platVer: os.release(),
+    commonPath: dataPathGlobal,
+    clientVer: qqPkgInfo.version,
+    hostName: os.hostname()
+});

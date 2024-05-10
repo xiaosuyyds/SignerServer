@@ -27,7 +27,8 @@
 #if defined(_X64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"9.9.2-16183", 0x2E0D0},
-	{"9.9.9-23361", 0x2EB50}};
+	{"9.9.9-23361", 0x2EB50},
+	{"9.9.9-23424", 0x2EB50}};
 #elif defined(_X86_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"9.9.2-15962", 0x2BD70},

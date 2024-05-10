@@ -150,5 +150,7 @@ std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_v
 	std::string extraDataHex = Bin2Hex(signResult + 256, *(signResult + ExtraOffsets));
 	std::string tokenDataHex = Bin2Hex(signResult, *(signResult + TokenOffsets));
 
+	delete[] signResult;
+
 	return std::make_tuple(signDataHex, extraDataHex, tokenDataHex);
 }

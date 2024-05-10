@@ -12,6 +12,16 @@
             }
         },
         {
+            "name": "ninja-arm64",
+            "displayName": "Configure ninja-arm64",
+            "description": "Configure ninja-arm64",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
+            }
+        },
+        {
             "name": "msvc-x64",
             "displayName": "Visual Studio Community 2022 Preview - amd64",
             "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
@@ -27,6 +37,22 @@
         }
     ],
     "buildPresets": [
+        {
+            "name":"ninja-arm64-debug",
+            "description": "Build ninja-arm64 Debug",
+            "displayName": "Build ninja-arm64 Debug",
+            "configurePreset": "ninja-arm64",
+            "configuration": "Debug",
+            "targets": "all"
+        },
+        {
+            "name": "ninja-arm64-release",
+            "description": "Build ninja-arm64 Release",
+            "displayName": "Build ninja-arm64 Release",
+            "configurePreset": "ninja-arm64",
+            "configuration": "Release",
+            "targets": "all"
+        }
         {
             "name": "ninja-x64-debug",
             "description": "Build ninja-x64 Debug",

@@ -52,7 +52,7 @@ std::map<std::string, uint64_t> addrMap = {
 	{"3.2.7-23361", 0x4C93C57}};
 #elif defined(_ARM64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
-	{"3.2.7-23361", 0x4C93C57}};
+	{"3.2.7-23361", 0x351EC98}};
 #endif
 #endif
 

@@ -24,7 +24,7 @@ jobs:
       uses: actions/download-artifact@v4
     
     - name: Create Release Draft and Upload Artifacts
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         name: SignerServer V${{ env.VERSION }}
         token: ${{ secrets.GITHUB_TOKEN }}

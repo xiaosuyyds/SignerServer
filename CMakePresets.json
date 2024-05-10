@@ -52,7 +52,7 @@
             "configurePreset": "ninja-arm64",
             "configuration": "Release",
             "targets": "all"
-        }
+        },
         {
             "name": "ninja-x64-debug",
             "description": "Build ninja-x64 Debug",

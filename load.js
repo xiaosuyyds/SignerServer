@@ -3,10 +3,9 @@ const os = require('node:os');
 
 const exePath = path.dirname(process.execPath);
 
-var QQWrapper;
+let QQWrapper, appid, qua;
 const qqPkgInfo = require(path.join(exePath, "resources/app/package.json"));
-var appid;
-var qua;
+
 if (os.platform() === "win32") {
     QQWrapper = require(path.join(exePath, "resources/app/versions", qqPkgInfo.version, "wrapper.node"));
     appid = "537213803";

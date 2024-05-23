@@ -11,16 +11,35 @@ for %%a in ("!RetString!") do (
     set "pathWithoutUninstall=%%~dpa"
 )
 
-if not exist %pathWithoutUninstall%version.dll (
+if not exist "%pathWithoutUninstall%version.dll" (
     if not exist %~dp0SignerServer.dll (
         echo SignerServer.dll not found
+        pause
         exit
     )
-    copy /y "%~dp0SignerServer.dll" "%pathWithoutUninstall%version.dll" 1>NUL 2>NUL || powershell Start-Process -FilePath cmd.exe -ArgumentList """/c pushd %~dp0 && %~s0 %*""" -Verb RunAs && exit
+    goto copydll
+) else (
+    set /p Choice="version.dll already exists, do you want to replace it?(Y/N):"
+    if /i "!Choice!"=="Y" goto copydll
+    if /i "!Choice!"=="y" goto copydll
 )
 
+:launch
 set "QQPath=!pathWithoutUninstall!QQ.exe"
 set ELECTRON_RUN_AS_NODE=1
-echo !QQPath!
 
-"!QQPath!" %~dp0load.js %*
+echo Launching QQ
+"!QQPath!" "%~dp0load.js" %*
+
+:copydll
+copy /y "%~dp0SignerServer.dll" "%pathWithoutUninstall%version.dll"
+if errorlevel 1 (
+    set /p Choice="Copy error, do you want to attempt to running as administrator?(Y/N):"
+    if /i "!Choice!"=="Y" goto restart
+    if /i "!Choice!"=="y" goto restart
+    exit
+)
+goto launch
+
+:restart
+    powershell Start-Process -FilePath cmd.exe -ArgumentList """/c pushd %~dp0 && %~s0 %*""" -Verb RunAs

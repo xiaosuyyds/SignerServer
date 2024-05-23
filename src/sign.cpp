@@ -1,8 +1,6 @@
 #include "sign.h"
 
-#include <mutex>
 #include <sstream>
-#include <iostream>
 #include <vector>
 #include <map>
 
@@ -23,12 +21,13 @@
 
 // 签名函数定义
 #if defined(_WIN_PLATFORM_)
-#define CURRENT_VERSION "9.9.9-23361"
+#define CURRENT_VERSION "9.9.10-24108"
 #if defined(_X64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"9.9.2-16183", 0x2E0D0},
 	{"9.9.9-23361", 0x2EB50},
-	{"9.9.9-23424", 0x2EB50}};
+	{"9.9.9-23424", 0x2EB50},
+	{"9.9.10-24108", 0x2EB50}};
 #elif defined(_X86_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"9.9.2-15962", 0x2BD70},
@@ -86,15 +85,17 @@ std::string Bin2Hex(const uint8_t *ptr, size_t length) {
 }
 
 Sign::Sign() {
-    std::thread([this]{ while (false) {
-        try {
-            Init();
-        }
-        catch (const std::exception &e) {
-            std::cerr << e.what() << '\n';
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-			continue;
-        }
+	printf("Start init sign\n");
+    std::thread([this]{
+		while (true) {
+			try {
+				Init();
+				break;
+			}
+			catch (const std::exception &e) {
+				printf("Init sign failed: %s\n", e.what());
+			}
+			std::this_thread::sleep_for(std::chrono::seconds(1));
     } }).detach();
 }
 

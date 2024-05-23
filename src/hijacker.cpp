@@ -8,7 +8,11 @@ void __stdcall TlsCallback(PVOID hModule, DWORD fdwReason, PVOID pContext) {
 	if (!TlsOnce) {
 		// for version.dll proxy
 		// load exports as early as possible
-		Exports::Load();
+		try	{
+			Exports::Load();
+		} catch (std::exception &e) {
+			printf("Failed to load exports: %s\n", e.what());
+		}
 		TlsOnce = true;
 	}
 }

@@ -7,6 +7,10 @@ public:
     Server(int port);
 
 private:
-    httplib::Server svr;
     Sign sign;
+    httplib::Server svr;
+    std::atomic<uint64_t> counter = 0;
+
+private:
+    void Init(int port);
 };

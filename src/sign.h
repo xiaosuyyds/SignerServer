@@ -9,6 +9,8 @@ public:
 private:
     typedef int (*SignFunctionType)(const char *cmd, const unsigned char *src, size_t src_len, int seq, unsigned char *result);
     SignFunctionType SignFunction = nullptr;
+
+private:
     void Init();
 
 public:

@@ -9,7 +9,7 @@ const qqPkgInfo = require(path.join(exePath, "resources/app/package.json"));
 if (os.platform() === "win32") {
     QQWrapper = require(path.join(exePath, "resources/app/versions", qqPkgInfo.version, "wrapper.node"));
     appid = "537213803";
-    qua = `V1_WIN_NQ_${qqVersionConfigInfo.curVersion.replace("-", "_")}_GW_B`;
+    qua = `V1_WIN_NQ_${qqPkgInfo.version.replace("-", "_")}_GW_B`;
 } else {
     QQWrapper = require(path.join(exePath, "resources/app/wrapper.node"));
     appid = "537213827";

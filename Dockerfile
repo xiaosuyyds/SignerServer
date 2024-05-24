@@ -1,6 +1,7 @@
-FROM mlikiowa/napcat-docker:base
+ROM ubuntu:22.04
 
-WORKDIR /usr/src/app
+# 设置环境变量
+ENV DEBIAN_FRONTEND=noninteractive
 
 COPY SignerServer-ubuntu-latest-x64.zip .
 
@@ -12,13 +13,31 @@ RUN arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && \
 # 安装 SignerServer
 RUN arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/x64/) && \
     unzip SignerServer-ubuntu-latest-${arch}.zip && \
-    chrom +x start.sh
-
-# 配置 supervisord
-RUN echo "[supervisord]" > /etc/supervisord.conf && \
-    echo "nodaemon=true" >> /etc/supervisord.conf && \
-    echo "[program:napcat]" >> /etc/supervisord.conf && \
-    echo "command=COMMAND" >> /etc/supervisord.conf
+    chrom +x start.sh && \
+    apt-get update && apt-get install -y \
+    libnss3 \   
+    libnotify4 \
+    libsecret-1-0 \
+    libgbm1 \
+    libasound2 \
+    fonts-wqy-zenhei \
+    gnutls-bin \ 
+    libglib2.0-dev \
+    libdbus-1-3 \
+    libgtk-3-0 \
+    libxss1 \
+    libxtst6 \
+    libatspi2.0-0 \
+    libx11-xcb1 \
+    ffmpeg \
+    unzip \
+    curl && \   
+    apt autoremove -y && \
+    apt clean && \
+    rm -rf \
+    /var/lib/apt/lists/* \
+    /tmp/* \
+    /var/tmp/*
 
 ENTRYPOINT ["sh", "start.sh"]
 

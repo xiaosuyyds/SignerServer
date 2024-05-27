@@ -27,31 +27,37 @@ std::map<std::string, uint64_t> addrMap = {
 	{"9.9.2-16183", 0x2E0D0},
 	{"9.9.9-23361", 0x2EB50},
 	{"9.9.9-23424", 0x2EB50},
-	{"9.9.10-24108", 0x2EB50}};
+	{"9.9.10-24108", 0x2EB50}
+};
 #elif defined(_X86_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"9.9.2-15962", 0x2BD70},
-	{"9.9.2-16183", 0x2BD70}};
+	{"9.9.2-16183", 0x2BD70}
+};
 #endif
 #elif defined(_MAC_PLATFORM_)
 #define CURRENT_VERSION "6.9.20-17153"
 #if defined(_X64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
-	{"6.9.19-16183", 0x1B29469}};
+	{"6.9.19-16183", 0x1B29469}
+};
 #elif defined(_ARM64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
-	{"6.9.20-17153", 0x1c73dd0}};
+	{"6.9.20-17153", 0x1c73dd0}
+};
 #endif
 #elif defined(_LINUX_PLATFORM_)
-#define CURRENT_VERSION "3.1.2-23361"
+#define CURRENT_VERSION "3.2.7-23361"
 #if defined(_X64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"3.1.2-12912", 0x33C38E0},
 	{"3.1.2-13107", 0x33C3920},
-	{"3.2.7-23361", 0x4C93C57}};
+	{"3.2.7-23361", 0x4C93C57}
+};
 #elif defined(_ARM64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
-	{"3.2.7-23361", 0x351EC98}};
+	{"3.2.7-23361", 0x351EC98}
+};
 #endif
 #endif
 

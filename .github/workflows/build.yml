@@ -50,6 +50,7 @@ jobs:
             SignerServer.dll
             load.js
             start.sh
+            start.bat
 
   ubuntu:
     name: run on ${{ matrix.os }}(${{ matrix.arch }})
@@ -91,3 +92,4 @@ jobs:
             libSignerServer.so 
             load.js
             start.sh
+            start.bat

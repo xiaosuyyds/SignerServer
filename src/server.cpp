@@ -94,7 +94,7 @@ void Server::Init(int port) {
             res.set_content(buffer.GetString(), "application/json"); 
         });
 
-        bool ret = svr.listen("0.0.0.0", port); // crach here
+        bool ret = svr.listen("0.0.0.0", port);
     }
     catch(std::exception &e) {
         printf("Server init failed: %s\n", e.what());

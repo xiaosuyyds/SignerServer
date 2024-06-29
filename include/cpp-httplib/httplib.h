@@ -8,7 +8,7 @@
 #ifndef CPPHTTPLIB_HTTPLIB_H
 #define CPPHTTPLIB_HTTPLIB_H
 
-#define CPPHTTPLIB_VERSION "0.15.3"
+#define CPPHTTPLIB_VERSION "0.16.0"
 
 /*
  * Configuration
@@ -726,6 +726,10 @@ private:
         assert(true == static_cast<bool>(fn));
         fn();
       }
+
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+      OPENSSL_thread_stop ();
+#endif
     }
 
     ThreadPool &pool_;
@@ -1819,6 +1823,9 @@ public:
   bool is_valid() const override;
 
   SSL_CTX *ssl_context() const;
+  
+  void update_certs (X509 *cert, EVP_PKEY *private_key,
+            X509_STORE *client_ca_cert_store = nullptr);
 
 private:
   bool process_and_close_socket(socket_t sock) override;
@@ -2825,15 +2832,25 @@ inline bool mmap::open(const char *path) {
   if (!::GetFileSizeEx(hFile_, &size)) { return false; }
   size_ = static_cast<size_t>(size.QuadPart);
 
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
   hMapping_ =
       ::CreateFileMappingFromApp(hFile_, NULL, PAGE_READONLY, size_, NULL);
+#else
+  hMapping_ =
+      ::CreateFileMappingW(hFile_, NULL, PAGE_READONLY, size.HighPart,
+                           size.LowPart, NULL);
+#endif
 
   if (hMapping_ == NULL) {
     close();
     return false;
   }
 
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
   addr_ = ::MapViewOfFileFromApp(hMapping_, FILE_MAP_READ, 0, 0);
+#else
+  addr_ = ::MapViewOfFile(hMapping_, FILE_MAP_READ, 0, 0, 0);
+#endif
 #else
   fd_ = ::open(path, O_RDONLY);
   if (fd_ == -1) { return false; }
@@ -7268,7 +7285,7 @@ inline bool ClientImpl::redirect(Request &req, Response &res, Error &error) {
   if (location.empty()) { return false; }
 
   const static std::regex re(
-      R"((?:(https?):)?(?://(?:\[([\d:]+)\]|([^:/?#]+))(?::(\d+))?)?([^?#]*)(\?[^#]*)?(?:#.*)?)");
+      R"((?:(https?):)?(?://(?:\[([a-fA-F\d:]+)\]|([^:/?#]+))(?::(\d+))?)?([^?#]*)(\?[^#]*)?(?:#.*)?)");
 
   std::smatch m;
   if (!std::regex_match(location, m, re)) { return false; }
@@ -8753,6 +8770,19 @@ inline bool SSLServer::is_valid() const { return ctx_; }
 
 inline SSL_CTX *SSLServer::ssl_context() const { return ctx_; }
 
+inline void SSLServer::update_certs (X509 *cert, EVP_PKEY *private_key,
+            X509_STORE *client_ca_cert_store) {
+
+    std::lock_guard<std::mutex> guard(ctx_mutex_);
+
+    SSL_CTX_use_certificate (ctx_, cert);
+    SSL_CTX_use_PrivateKey  (ctx_, private_key);
+
+    if (client_ca_cert_store != nullptr) {
+        SSL_CTX_set_cert_store  (ctx_, client_ca_cert_store);
+    }
+}
+
 inline bool SSLServer::process_and_close_socket(socket_t sock) {
   auto ssl = detail::ssl_new(
       sock, ctx_, ctx_mutex_,
@@ -9213,7 +9243,7 @@ inline Client::Client(const std::string &scheme_host_port,
                       const std::string &client_cert_path,
                       const std::string &client_key_path) {
   const static std::regex re(
-      R"((?:([a-z]+):\/\/)?(?:\[([\d:]+)\]|([^:/?#]+))(?::(\d+))?)");
+      R"((?:([a-z]+):\/\/)?(?:\[([a-fA-F\d:]+)\]|([^:/?#]+))(?::(\d+))?)");
 
   std::smatch m;
   if (std::regex_match(scheme_host_port, m, re)) {
@@ -9250,6 +9280,8 @@ inline Client::Client(const std::string &scheme_host_port,
                                              client_key_path);
     }
   } else {
+    // NOTE: Update TEST(UniversalClientImplTest, Ipv6LiteralAddress)
+    // if port param below changes.
     cli_ = detail::make_unique<ClientImpl>(scheme_host_port, 80,
                                            client_cert_path, client_key_path);
   }

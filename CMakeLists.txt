@@ -7,8 +7,6 @@ project(SignerServer)
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     add_definitions(-D _WIN_PLATFORM_)
 
-    enable_language(ASM_MASM)
-
     link_libraries(ws2_32)
 elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
     add_definitions(-D _MAC_PLATFORM_)
@@ -24,12 +22,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
     add_definitions(-D _ARM64_ARCH_)
 endif()
 
-file(GLOB SOURCE_FILES "./src/*.cpp" "./src/*.asm")
+file(GLOB SOURCE_FILES "./src/*.cpp")
 
 add_library(SignerServer SHARED ${SOURCE_FILES})
-
-if(MSVC)
-    target_link_options(SignerServer PRIVATE
-        /DEF:${CMAKE_CURRENT_SOURCE_DIR}/version.def
-    )
-endif()

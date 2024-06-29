@@ -1,6 +1,6 @@
 # https://docs.github.com/en/actions/learn-github-actions/contexts
 
-name: SignerServer
+name: build
 on:
   push:
     branches:

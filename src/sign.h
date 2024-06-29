@@ -1,18 +1,10 @@
+#pragma once
+
 #include <string>
 #include <tuple>
 
-class Sign
+namespace Sign
 {
-public:
-    Sign();
-
-private:
-    typedef int (*SignFunctionType)(const char *cmd, const unsigned char *src, size_t src_len, int seq, unsigned char *result);
-    SignFunctionType SignFunction = nullptr;
-
-private:
-    void Init();
-
-public:
+    bool Init();
     std::tuple<std::string, std::string, std::string> Call(const std::string_view cmd, const std::string_view src, int seq);
-};
+}

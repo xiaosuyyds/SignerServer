@@ -22,14 +22,8 @@ if not exist "%pathWithoutUninstall%version.dll" (
     set /p Choice="version.dll already exists, do you want to replace it?(Y/N):"
     if /i "!Choice!"=="Y" goto copydll
     if /i "!Choice!"=="y" goto copydll
+    goto launch
 )
-
-:launch
-set "QQPath=!pathWithoutUninstall!QQ.exe"
-set ELECTRON_RUN_AS_NODE=1
-
-echo Launching QQ
-"!QQPath!" "%~dp0load.js" %*
 
 :copydll
 copy /y "%~dp0SignerServer.dll" "%pathWithoutUninstall%version.dll"
@@ -43,3 +37,10 @@ goto launch
 
 :restart
     powershell Start-Process -FilePath cmd.exe -ArgumentList """/c pushd %~dp0 && %~s0 %*""" -Verb RunAs
+
+:launch
+set "QQPath=!pathWithoutUninstall!QQ.exe"
+set ELECTRON_RUN_AS_NODE=1
+
+echo Launching QQ
+"!QQPath!" "%~dp0load.js" %*

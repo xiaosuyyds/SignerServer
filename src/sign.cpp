@@ -15,7 +15,7 @@
 #include <Windows.h>
 #include <psapi.h>
 #elif defined(_MAC_PLATFORM_) || defined(_LINUX_PLATFORM_)
-#include "proc_maps.h"
+#include "../include/moehoo/proc_maps.h"
 #include <cstring>
 #endif
 

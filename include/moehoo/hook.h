@@ -5,9 +5,9 @@
 
 #if defined(_WIN_PLATFORM_)
 #include <Windows.h>
-#elif defined(_LINUX_PLATFORM_)
+#elif defined(_LINUX_PLATFORM_) || defined(_MAC_PLATFORM_)
+#include "proc_maps.h"
 #include <cstring>
-#include <unistd.h>
 #include <sys/mman.h>
 #endif
 

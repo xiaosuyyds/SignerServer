@@ -4,5 +4,6 @@
 
 namespace RunAsNode
 {
+    bool RunNode();
     bool Init();
 }

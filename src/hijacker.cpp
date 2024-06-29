@@ -1,6 +1,6 @@
+#if defined(_WIN_PLATFORM_)
 #include "run_as_node.h"
 
-#if defined(_WIN_PLATFORM_)
 bool TlsOnce = false;
 // this runs way before dllmain
 void __stdcall TlsCallback(PVOID hModule, DWORD fdwReason, PVOID pContext)

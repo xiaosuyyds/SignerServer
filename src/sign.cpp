@@ -50,12 +50,13 @@ std::map<std::string, uint64_t> addrMap = {
 	{"6.9.20-17153", 0x1c73dd0}};
 #endif
 #elif defined(_LINUX_PLATFORM_)
-#define CURRENT_VERSION "3.2.7-23361"
+#define CURRENT_VERSION "3.2.9-24815"
 #if defined(_X64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"3.1.2-12912", 0x33C38E0},
 	{"3.1.2-13107", 0x33C3920},
-	{"3.2.7-23361", 0x4C93C57}};
+	{"3.2.7-23361", 0x4C93C57},
+	{"3.2.9-24815", 0x4E5D3B7}};
 #elif defined(_ARM64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
 	{"3.2.7-23361", 0x351EC98}};

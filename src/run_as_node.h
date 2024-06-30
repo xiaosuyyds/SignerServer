@@ -4,6 +4,6 @@
 
 namespace RunAsNode
 {
-    bool Init(std::string &version);
+    bool Init(const std::string &version);
     bool RunNode();
 }

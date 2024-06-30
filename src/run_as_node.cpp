@@ -51,7 +51,7 @@ bool RunAsNode::RunNode()
     return true;
 }
 
-bool RunAsNode::Init(std::string &version)
+bool RunAsNode::Init(const std::string &version)
 {
     uint64_t baseAddr = 0;
 #if defined(_WIN_PLATFORM_)

@@ -85,7 +85,7 @@ std::string Bin2Hex(const uint8_t *ptr, size_t length)
 	return str;
 }
 
-bool Sign::Init(std::string &version)
+bool Sign::Init(const std::string &version)
 {
 	uint64_t HookAddress = 0;
 #if defined(_WIN_PLATFORM_)

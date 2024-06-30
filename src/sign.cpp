@@ -1,22 +1,14 @@
 #include "sign.h"
 
-#include <sstream>
-#include <vector>
 #include <map>
-
+#include <vector>
 #include <thread>
-
-// #define _LINUX_PLATFORM_
-// #define _WIN_PLATFORM_
-
-// #define _X64_ARCH_
+#include <stdexcept>
 
 #if defined(_WIN_PLATFORM_)
 #include <Windows.h>
-#include <psapi.h>
-#elif defined(_MAC_PLATFORM_) || defined(_LINUX_PLATFORM_)
+#elif defined(_LINUX_PLATFORM_) || defined(_MAC_PLATFORM_)
 #include "../include/moehoo/proc_maps.h"
-#include <cstring>
 #endif
 
 typedef int (*SignFunctionType)(const char *cmd, const unsigned char *src, size_t src_len, int seq, unsigned char *result);

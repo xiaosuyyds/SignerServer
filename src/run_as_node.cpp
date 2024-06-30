@@ -1,14 +1,14 @@
 #if defined(_WIN_PLATFORM_)
 #include "run_as_node.h"
 
-#include <vector>
-#include <algorithm>
-#include <codecvt>
 #include <map>
+#include <vector>
+#include <codecvt>
+#include <algorithm>
 
 #if defined(_X64_ARCH_) // {call winmain, check run as node function}
-std::map<std::string, std::pair<uint64_t, uint64_t>> mainAddrMap = {
-    {"9.9.12-25234", {0x457A76D, 0x3A5D70}}};
+std::map<std::string, std::tuple<uint64_t, uint64_t, uint64_t>> mainAddrMap = {
+    {"9.9.12-25234", {0x457A76D, 0x3A5D70, 0x1FFF710}}};
 #endif
 
 int(__stdcall *oriWinMain)(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
@@ -86,12 +86,12 @@ bool RunAsNode::Init(const std::string &version)
     if (baseAddr == 0)
         throw std::runtime_error("Can't find hook address");
 
-    auto [callptr, funcptr] = mainAddrMap[version];
+    auto [callptr, func1ptr, func2ptr] = mainAddrMap[version];
 
     uint8_t *abscallptr = reinterpret_cast<uint8_t *>(baseAddr + callptr);
     oriWinMain = reinterpret_cast<int(__stdcall *)(HINSTANCE, HINSTANCE, LPSTR, int)>(moehoo::get_call_address(abscallptr));
-    checkRunAsNode = reinterpret_cast<void(__fastcall *)(void *)>(baseAddr + funcptr);
-    nodeInitializeOncePerProcess = reinterpret_cast<std::shared_ptr<void> (*)(const std::vector<std::string> &, uint32_t)>(baseAddr + 0x1FFF710);
+    checkRunAsNode = reinterpret_cast<void(__fastcall *)(void *)>(baseAddr + func1ptr);
+    nodeInitializeOncePerProcess = reinterpret_cast<std::shared_ptr<void> (*)(const std::vector<std::string> &, uint32_t)>(baseAddr + func2ptr);
     return moehoo::hook(abscallptr, &fakeWinMain);
 }
 

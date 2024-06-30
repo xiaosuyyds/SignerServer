@@ -110,7 +110,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
     }
     return TRUE;
 }
-#elif defined(_MAC_PLATFORM_) || defined(_LINUX_PLATFORM_)
+#elif defined(_LINUX_PLATFORM_) || defined(_MAC_PLATFORM_)
 void __attribute__((constructor)) my_init(void)
 {
     init();

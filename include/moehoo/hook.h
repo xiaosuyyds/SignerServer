@@ -1,13 +1,11 @@
 #ifndef _HOOK_H_
 #define _HOOK_H_
-#include <string>
 #include <iostream>
 
 #if defined(_WIN_PLATFORM_)
 #include <Windows.h>
 #elif defined(_LINUX_PLATFORM_) || defined(_MAC_PLATFORM_)
 #include "proc_maps.h"
-#include <cstring>
 #include <sys/mman.h>
 #endif
 
@@ -88,7 +86,7 @@ inline void *moehoo::search_and_fill_jump(uint64_t baseAddress, void *targetAddr
 		}
 		searchStart += mbi.RegionSize;
 	}
-#elif defined(_LINUX_PLATFORM_)
+#elif defined(_LINUX_PLATFORM_) || defined(_MAC_PLATFORM_)
 	// 保证地址对齐
 	searchStart &= 0xfffffffffffff000;
 	searchStart += 0x1000;
@@ -163,7 +161,7 @@ inline bool moehoo::hook(uint8_t *callAddr, void *lpFunction)
 		return false;
 	}
 	return true;
-#elif defined(_LINUX_PLATFORM_)
+#elif defined(_LINUX_PLATFORM_) || defined(_MAC_PLATFORM_)
 	// printf("Hooking %p to %p, distance: %ld\n", callAddr, lpFunction, distance);
 
 	auto get_page_addr = [](void *addr) -> void *

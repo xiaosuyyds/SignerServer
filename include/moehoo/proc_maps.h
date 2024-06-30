@@ -1,14 +1,13 @@
 #ifndef PROC_MAPS_H
 #define PROC_MAPS_H
-#if defined(_MAC_PLATFORM_) || defined(_LINUX_PLATFORM_)
 
+#if defined(_LINUX_PLATFORM_) || defined(_MAC_PLATFORM_)
+
+#include <vector>
 #include <memory>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <vector>
 #include <functional>
-#include <unistd.h>
 
 namespace hak
 {
@@ -179,4 +178,5 @@ inline auto hak::get_maps(pid_t pid) -> std::shared_ptr<proc_maps>
 }
 
 #endif
+
 #endif // PROC_MAPS_H

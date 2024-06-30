@@ -23,10 +23,16 @@ typedef int (*SignFunctionType)(const char *cmd, const unsigned char *src, size_
 SignFunctionType SignFunction = nullptr;
 
 // 签名函数定义
-#if defined(_WIN_PLATFORM_)
-#define CURRENT_VERSION "9.9.12-25234"
 #if defined(_X64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
+	// Linux
+	{"3.1.2-12912", 0x33C38E0},
+	{"3.1.2-13107", 0x33C3920},
+	{"3.2.7-23361", 0x4C93C57},
+	{"3.2.9-24815", 0x4E5D3B7},
+	// Macos
+	{"6.9.19-16183", 0x1B29469},
+	// Windows
 	{"9.9.2-16183", 0x2E0D0},
 	{"9.9.9-23361", 0x2EB50},
 	{"9.9.9-23424", 0x2EB50},
@@ -39,28 +45,10 @@ std::map<std::string, uint64_t> addrMap = {
 std::map<std::string, uint64_t> addrMap = {
 	{"9.9.2-15962", 0x2BD70},
 	{"9.9.2-16183", 0x2BD70}};
-#endif
-#elif defined(_MAC_PLATFORM_)
-#define CURRENT_VERSION "6.9.20-17153"
-#if defined(_X64_ARCH_)
-std::map<std::string, uint64_t> addrMap = {
-	{"6.9.19-16183", 0x1B29469}};
 #elif defined(_ARM64_ARCH_)
 std::map<std::string, uint64_t> addrMap = {
+	{"3.2.7-23361", 0x351EC98}
 	{"6.9.20-17153", 0x1c73dd0}};
-#endif
-#elif defined(_LINUX_PLATFORM_)
-#define CURRENT_VERSION "3.2.9-24815"
-#if defined(_X64_ARCH_)
-std::map<std::string, uint64_t> addrMap = {
-	{"3.1.2-12912", 0x33C38E0},
-	{"3.1.2-13107", 0x33C3920},
-	{"3.2.7-23361", 0x4C93C57},
-	{"3.2.9-24815", 0x4E5D3B7}};
-#elif defined(_ARM64_ARCH_)
-std::map<std::string, uint64_t> addrMap = {
-	{"3.2.7-23361", 0x351EC98}};
-#endif
 #endif
 
 int SignOffsets = 767; // 562 before 3.1.2-13107, 767 in others
@@ -97,7 +85,7 @@ std::string Bin2Hex(const uint8_t *ptr, size_t length)
 	return str;
 }
 
-bool Sign::Init()
+bool Sign::Init(std::string &version)
 {
 	uint64_t HookAddress = 0;
 #if defined(_WIN_PLATFORM_)
@@ -106,7 +94,7 @@ bool Sign::Init()
 	{
 		throw std::runtime_error("Can't find wrapper.node module");
 	}
-	HookAddress = reinterpret_cast<uint64_t>(wrapperModule) + addrMap[CURRENT_VERSION];
+	HookAddress = reinterpret_cast<uint64_t>(wrapperModule) + addrMap[version];
 	printf("HookAddress: %llx\n", HookAddress);
 #elif defined(_MAC_PLATFORM_)
 	auto pmap = hak::get_maps();
@@ -114,7 +102,7 @@ bool Sign::Init()
 	{
 		if (pmap->module_name.find("wrapper.node") != std::string::npos && pmap->offset == 0)
 		{
-			HookAddress = pmap->start() + addrMap[CURRENT_VERSION];
+			HookAddress = pmap->start() + addrMap[version];
 			printf("HookAddress: %llx\n", HookAddress);
 			break;
 		}
@@ -125,7 +113,7 @@ bool Sign::Init()
 	{
 		if (pmap->module_name.find("wrapper.node") != std::string::npos && pmap->offset == 0)
 		{
-			HookAddress = pmap->start() + addrMap[CURRENT_VERSION];
+			HookAddress = pmap->start() + addrMap[version];
 			printf("HookAddress: %lx\n", HookAddress);
 			break;
 		}

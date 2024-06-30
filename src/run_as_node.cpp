@@ -6,12 +6,9 @@
 #include <codecvt>
 #include <map>
 
-#if defined(_WIN_PLATFORM_)
-#define CURRENT_VERSION "9.9.12-25234"
 #if defined(_X64_ARCH_) // {call winmain, check run as node function}
 std::map<std::string, std::pair<uint64_t, uint64_t>> mainAddrMap = {
     {"9.9.12-25234", {0x457A76D, 0x3A5D70}}};
-#endif
 #endif
 
 int(__stdcall *oriWinMain)(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
@@ -48,13 +45,13 @@ bool RunAsNode::RunNode()
 
     MessageBoxA(NULL, "pre nodeInitializeOncePerProcess", "fakeWinMain", MB_OK);
     std::for_each(argv.begin(), argv.end(), [](const std::string &arg)
-                  { MessageBoxA(NULL, arg.c_str(), "fakeWinMain", MB_OK);});
+                  { MessageBoxA(NULL, arg.c_str(), "fakeWinMain", MB_OK); });
     nodeInitializeOncePerProcess(argv, (1 << 6) | (1 << 7));
     MessageBoxA(NULL, "post nodeInitializeOncePerProcess", "fakeWinMain", MB_OK);
     return true;
 }
 
-bool RunAsNode::Init()
+bool RunAsNode::Init(std::string &version)
 {
     uint64_t baseAddr = 0;
 #if defined(_WIN_PLATFORM_)
@@ -89,7 +86,7 @@ bool RunAsNode::Init()
     if (baseAddr == 0)
         throw std::runtime_error("Can't find hook address");
 
-    auto [callptr, funcptr] = mainAddrMap[CURRENT_VERSION];
+    auto [callptr, funcptr] = mainAddrMap[version];
 
     uint8_t *abscallptr = reinterpret_cast<uint8_t *>(baseAddr + callptr);
     oriWinMain = reinterpret_cast<int(__stdcall *)(HINSTANCE, HINSTANCE, LPSTR, int)>(moehoo::get_call_address(abscallptr));

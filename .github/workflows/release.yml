@@ -23,8 +23,12 @@ jobs:
 
       - name: Download All Artifact
         uses: actions/download-artifact@v4
-        with:
-          path: artifacts
+
+      - name: Zip Artifact
+        run: |
+          zip -r SignerServer-windows-x64.zip SignerServer-windows-latest-x64.zip
+          zip -r SignerServer-ubuntu-x64.zip SignerServer-ubuntu-latest-x64.zip
+          zip -r SignerServer-ubuntu-arm64.zip SignerServer-ubuntu-latest-arm64.zip
       
       - name: Create Release Draft and Upload Artifacts
         uses: softprops/action-gh-release@v2
@@ -32,4 +36,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           body_path: CHANGELOG.md
           files: |
-            artifacts/*/*
+            SignerServer-windows-x64.zip
+            SignerServer-ubuntu-x64.zip
+            SignerServer-ubuntu-arm64.zip

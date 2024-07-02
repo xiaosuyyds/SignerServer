@@ -4,15 +4,16 @@ const os = require('node:os');
 const exePath = path.dirname(process.execPath);
 
 let QQWrapper, appid, qua;
-const qqPkgInfo = require(path.join(exePath, "resources/app/package.json"));
 
 if (os.platform() === "win32") {
-    QQWrapper = require(path.join(exePath, "resources/app/versions", qqPkgInfo.version, "wrapper.node"));
-    appid = "537213803";
-    qua = `V1_WIN_NQ_${qqPkgInfo.version.replace("-", "_")}_GW_B`;
+    const versionConfig = require(path.join(exePath, "resources/app/versions/config.json"));
+    QQWrapper = require(path.join(exePath, "resources/app/versions", versionConfig.curVersion, "wrapper.node"));
+    appid = "537226655"; // 9.9.12-25234
+    qua = `V1_WIN_NQ_${versionConfig.curVersion.replace("-", "_")}_GW_B`;
 } else {
+    const qqPkgInfo = require(path.join(exePath, "resources/app/package.json"));
     QQWrapper = require(path.join(exePath, "resources/app/wrapper.node"));
-    appid = "537213827";
+    appid = "537226441";
     qua = qqPkgInfo.qua;
 }
 

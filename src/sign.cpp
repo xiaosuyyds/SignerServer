@@ -84,9 +84,7 @@ bool Sign::Init(const std::string &version)
 #if defined(_WIN_PLATFORM_)
 	HMODULE wrapperModule = GetModuleHandleW(L"wrapper.node");
 	if (wrapperModule == NULL)
-	{
 		throw std::runtime_error("Can't find wrapper.node module");
-	}
 	HookAddress = reinterpret_cast<uint64_t>(wrapperModule) + addrMap[version];
 	printf("HookAddress: %llx\n", HookAddress);
 #elif defined(_MAC_PLATFORM_)
@@ -113,9 +111,7 @@ bool Sign::Init(const std::string &version)
 	} while ((pmap = pmap->next()) != nullptr);
 #endif
 	if (HookAddress == 0)
-	{
 		throw std::runtime_error("Can't find hook address");
-	}
 	SignFunction = reinterpret_cast<SignFunctionType>(HookAddress);
 	return true;
 }
@@ -123,9 +119,7 @@ bool Sign::Init(const std::string &version)
 std::tuple<std::string, std::string, std::string> Sign::Call(const std::string_view cmd, const std::string_view src, int seq)
 {
 	if (SignFunction == nullptr)
-	{
 		throw std::runtime_error("Sign function not initialized");
-	}
 
 	const std::vector<uint8_t> signArgSrc = Hex2Bin(src);
 

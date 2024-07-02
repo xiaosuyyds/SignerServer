@@ -13,19 +13,54 @@ void init()
     {
 #if defined(_WIN_PLATFORM_)
         std::string version = "9.9.12-25234";
+        try
+        {
+            std::ifstream versionConfig("resources\\app\\versions\\config.json");
+            if (versionConfig.is_open())
+            {
+                std::string versionConfigStr;
+                versionConfig >> versionConfigStr;
+                versionConfig.close();
+                rapidjson::Document doc;
+                doc.Parse(versionConfigStr.c_str(), versionConfigStr.size());
+                if (doc.HasMember("curVersion") && doc["curVersion"].IsString())
+                    version = doc["curVersion"].GetString();
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
 #elif defined(_MAC_PLATFORM_)
         std::string version = "6.9.19-16183";
 #elif defined(_LINUX_PLATFORM_)
         std::string version = "3.2.9-24815";
+        try
+        {
+            std::ifstream versionConfig("/opt/QQ/resources/app/package.json");
+            if (versionConfig.is_open())
+            {
+                std::string versionConfigStr;
+                versionConfig >> versionConfigStr;
+                versionConfig.close();
+                rapidjson::Document doc;
+                doc.Parse(versionConfigStr.c_str(), versionConfigStr.size());
+                if (doc.HasMember("version") && doc["version"].IsString())
+                    version = doc["version"].GetString();
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
 #endif
         std::string ip = "0.0.0.0";
         int port = 8080;
 
-
         std::string default_config = R"({"ip":"0.0.0.0","port":8080})";
 
         rapidjson::Document doc;
-        
+
         std::ifstream configFile("sign.json");
         if (!configFile.is_open())
         {

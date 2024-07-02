@@ -45,7 +45,7 @@ void init()
             versionConfigStrBuf << versionConfig.rdbuf();
             versionConfig.close();
             rapidjson::Document doc;
-            doc.Parse(versionConfigStrBuf.str().c_str(), versionConfigStrBuf.str().c_str());
+            doc.Parse(versionConfigStrBuf.str().c_str(), versionConfigStrBuf.str().size());
             if (doc.HasMember("version") && doc["version"].IsString())
                 version = doc["version"].GetString();
         }

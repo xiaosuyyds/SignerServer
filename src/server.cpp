@@ -2,8 +2,6 @@
 #include "../include/rapidjson/document.h"
 #include "../include/rapidjson/writer.h"
 
-#include <thread>
-
 std::string Server::GetSign(const std::string_view &cmd, const std::string_view &src, const int seq)
 {
     auto [signDataHex, extraDataHex, tokenDataHex] = Sign::Call(cmd, src, seq);

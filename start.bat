@@ -5,6 +5,9 @@ for /f "tokens=2*" %%a in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\M
     set "RetString=%%b"
     goto :boot
 )
+echo QQ installation not found
+pause
+exit
 
 :boot
 for %%a in ("!RetString!") do (
@@ -36,7 +39,8 @@ if errorlevel 1 (
 goto launch
 
 :restart
-    powershell Start-Process -FilePath cmd.exe -ArgumentList """/c pushd %~dp0 && %~s0 %*""" -Verb RunAs
+powershell Start-Process -FilePath cmd.exe -ArgumentList """/c pushd %~dp0 && %~s0 %*""" -Verb RunAs
+exit
 
 :launch
 set "QQPath=!pathWithoutUninstall!QQ.exe"

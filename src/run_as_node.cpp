@@ -21,7 +21,6 @@ std::shared_ptr<void> (*nodeInitializeOncePerProcess)(
 
 int __stdcall fakeWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-    MessageBoxA(NULL, "Init", "fakeWinMain", MB_OK);
     checkRunAsNode(nullptr);
     return oriWinMain(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 }
@@ -43,11 +42,7 @@ bool RunAsNode::RunNode()
                    [](auto &a)
                    { return std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(a); });
 
-    MessageBoxA(NULL, "pre nodeInitializeOncePerProcess", "fakeWinMain", MB_OK);
-    std::for_each(argv.begin(), argv.end(), [](const std::string &arg)
-                  { MessageBoxA(NULL, arg.c_str(), "fakeWinMain", MB_OK); });
     nodeInitializeOncePerProcess(argv, (1 << 6) | (1 << 7));
-    MessageBoxA(NULL, "post nodeInitializeOncePerProcess", "fakeWinMain", MB_OK);
     return true;
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#define _DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR
 
 #include "sign.h"
 #include "../include/cpp-httplib/httplib.h"

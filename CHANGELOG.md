@@ -1,4 +1,4 @@
-# v2.0.0
+# SignerServer
 
 QQ Version: Windows 9.9.11-24815 / Linux 3.2.9-24815
 

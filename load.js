@@ -3,16 +3,18 @@ const os = require('node:os');
 
 const exePath = path.dirname(process.execPath);
 
-let QQWrapper, appid, qua;
+let QQWrapper, version, appid, qua;
 
 if (os.platform() === "win32") {
     const versionConfig = require(path.join(exePath, "resources/app/versions/config.json"));
-    QQWrapper = require(path.join(exePath, "resources/app/versions", versionConfig.curVersion, "wrapper.node"));
+    version = versionConfig.curVersion;
+    QQWrapper = require(path.join(exePath, "resources/app/versions", version, "wrapper.node"));
     appid = "537226655"; // 9.9.12-25234
-    qua = `V1_WIN_NQ_${versionConfig.curVersion.replace("-", "_")}_GW_B`;
+    qua = `V1_WIN_NQ_${version.replace("-", "_")}_GW_B`;
 } else {
     const qqPkgInfo = require(path.join(exePath, "resources/app/package.json"));
     QQWrapper = require(path.join(exePath, "resources/app/wrapper.node"));
+    version = qqPkgInfo.version;
     appid = "537226441";
     qua = qqPkgInfo.qua;
 }
@@ -43,7 +45,7 @@ engine.initWithDeskTopConfig({
     base_path_prefix: "",
     platform_type: 3,
     app_type: 4,
-    app_version: qqPkgInfo.version,
+    app_version: version,
     os_version: os.release(),
     use_xlog: true,
     qua: qua,
@@ -59,6 +61,6 @@ loginService.initConfig({
     appid: appid,
     platVer: os.release(),
     commonPath: dataPathGlobal,
-    clientVer: qqPkgInfo.version,
+    clientVer: version,
     hostName: os.hostname()
 });

@@ -12,7 +12,7 @@ void init()
     try
     {
 #if defined(_WIN_PLATFORM_)
-        std::string version = "9.9.12-25234";
+        std::string version = "9.9.12-25300";
         try
         {
             std::ifstream versionConfig("resources\\app\\versions\\config.json");
@@ -123,6 +123,15 @@ void init()
     }
 }
 
+void uninit()
+{
+    if (server != nullptr)
+    {
+        delete server;
+        server = nullptr;
+    }
+}
+
 #if defined(_WIN_PLATFORM_)
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
@@ -136,11 +145,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
     case DLL_THREAD_DETACH:
         break;
     case DLL_PROCESS_DETACH:
-        if (server != nullptr)
-        {
-            delete server;
-            server = nullptr;
-        }
+        uninit();
         break;
     }
     return TRUE;
@@ -149,5 +154,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 void __attribute__((constructor)) my_init(void)
 {
     init();
+}
+
+void __attribute__ ((destructor)) my_fini(void)
+{
+    uninit();
 }
 #endif

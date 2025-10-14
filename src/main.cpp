@@ -5,13 +5,20 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <windows.h>
 
 std::ofstream logfile;
 
 void init()
 {
     logfile.open("C:\\temp\\signer_log.txt", std::ios::app);
-    logfile << "--- DLL ATTACHED ---" << std::endl;
+    DWORD pid = GetCurrentProcessId();
+
+    // 日志文件名也带上 PID，这样每个进程一个日志文件，互不干扰！
+    std::string log_filename = "C:\\temp\\signer_log_" + std::to_string(pid) + ".txt";
+    logfile.open(log_filename, std::ios::app);
+
+    logfile << "--- DLL ATTACHED to PID: " << pid << " ---" << std::endl;
 
 #if defined(_WIN_PLATFORM_)
     std::string version = "9.9.12-25300";

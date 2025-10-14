@@ -6,8 +6,13 @@
 #include <fstream>
 #include <iostream>
 
+std::ofstream logfile;
+
 void init()
 {
+    logfile.open("C:\\temp\\signer_log.txt", std::ios::app);
+    logfile << "--- DLL ATTACHED ---" << std::endl;
+
 #if defined(_WIN_PLATFORM_)
     std::string version = "9.9.12-25300";
     try
@@ -65,7 +70,7 @@ void init()
     std::ifstream configFile("sign.json");
     if (!configFile.is_open())
     {
-        printf("sign.json not found, use default\n");
+        logfile <<"sign.json not found, use default" << std::endl;
         std::ofstream("sign.json") << default_config;
         doc.Parse(default_config.c_str(), default_config.size());
     }
@@ -80,7 +85,7 @@ void init()
         }
         catch (const std::exception &e)
         {
-            printf("Parse config failed, use default: %s\n", e.what());
+            logfile <<"Parse config failed, use default: " << e.what() << std::endl;
             doc.Parse(default_config.c_str(), default_config.size());
         }
     }
@@ -94,24 +99,24 @@ void init()
 
     std::thread sign_init([version, ip, port]
                           {
-        printf("Start Init sign\n");
+        logfile <<"Start Init sign" << std::endl;
         for (int i = 0; i < 10; i++)
         {
             try
             {
                 if (Sign::Init(version))
                 {
-                    printf("Start Init server\n");
+                    logfile <<"Start Init server" << std::endl;
                     Server server;
                     server.Init();
                     if (!server.Run(ip, port))
-                        printf("Server run failed\n");
+                        logfile <<"Server run failed" << std::endl;
                     return;
                 }
             }
             catch (const std::exception &e)
             {
-                printf("Init failed: %s\n", e.what());
+                logfile << "Init failed in try " << i + 1 << ": " << e.what() << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::seconds(1));
         } });

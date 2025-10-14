@@ -1,16 +1,20 @@
 @echo off
 setlocal enabledelayedexpansion
 
+rem
 for /f "tokens=2*" %%a in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\QQ" /v "UninstallString"') do (
-    set "RetString=%%b"
-    goto :boot
+    rem 使用 %%~b 可以直接移除 %%b 内容两端的引号
+    set "UninstallFullPath=%%~b"
+    goto :found_path
 )
+
 echo QQ installation not found
 pause
 exit
 
-:boot
-for %%a in ("!RetString!") do (
+:found_path
+rem 直接从净化后的完整路径中提取目录
+for %%a in ("!UninstallFullPath!") do (
     set "pathWithoutUninstall=%%~dpa"
 )
 

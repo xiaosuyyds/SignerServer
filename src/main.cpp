@@ -11,10 +11,8 @@ std::ofstream logfile;
 
 void init()
 {
-    logfile.open("C:\\temp\\signer_log.txt", std::ios::app);
     DWORD pid = GetCurrentProcessId();
 
-    // 日志文件名也带上 PID，这样每个进程一个日志文件，互不干扰！
     std::string log_filename = "C:\\temp\\signer_log_" + std::to_string(pid) + ".txt";
     logfile.open(log_filename, std::ios::app);
 

@@ -87,6 +87,7 @@ std::string Bin2Hex(const uint8_t *ptr, size_t length)
 bool Sign::Init(const std::string &version)
 {
 	uint64_t HookAddress = 0;
+	printf("Init version: %s\n", version.c_str());
 #if defined(_WIN_PLATFORM_)
 	HMODULE wrapperModule = GetModuleHandleW(L"wrapper.node");
 	if (wrapperModule == NULL)
@@ -108,6 +109,7 @@ bool Sign::Init(const std::string &version)
 	auto pmap = hak::get_maps();
 	do
 	{
+		printf("Module: %s, Offset: %lx, Start: %lx\n", pmap->module_name.c_str(), pmap->offset, pmap->start());
 		if (pmap->module_name.find("wrapper.node") != std::string::npos && pmap->offset == 0)
 		{
 			HookAddress = pmap->start() + addrMap[version];

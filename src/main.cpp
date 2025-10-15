@@ -5,19 +5,9 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <windows.h>
-
-std::ofstream logfile;
 
 void init()
 {
-    DWORD pid = GetCurrentProcessId();
-
-    std::string log_filename = "C:\\temp\\signer_log_" + std::to_string(pid) + ".txt";
-    logfile.open(log_filename, std::ios::app);
-
-    logfile << "--- DLL ATTACHED to PID: " << pid << " ---" << std::endl;
-
 #if defined(_WIN_PLATFORM_)
     std::string version = "9.9.12-25300";
     try
@@ -75,7 +65,7 @@ void init()
     std::ifstream configFile("sign.json");
     if (!configFile.is_open())
     {
-        logfile <<"sign.json not found, use default" << std::endl;
+        printf("sign.json not found, use default\n");
         std::ofstream("sign.json") << default_config;
         doc.Parse(default_config.c_str(), default_config.size());
     }
@@ -90,7 +80,7 @@ void init()
         }
         catch (const std::exception &e)
         {
-            logfile <<"Parse config failed, use default: " << e.what() << std::endl;
+            printf("Parse config failed, use default: %s\n", e.what());
             doc.Parse(default_config.c_str(), default_config.size());
         }
     }
@@ -104,24 +94,24 @@ void init()
 
     std::thread sign_init([version, ip, port]
                           {
-        logfile <<"Start Init sign" << std::endl;
+        printf("Start Init sign\n");
         for (int i = 0; i < 10; i++)
         {
             try
             {
                 if (Sign::Init(version))
                 {
-                    logfile <<"Start Init server" << std::endl;
+                    printf("Start Init server\n");
                     Server server;
                     server.Init();
                     if (!server.Run(ip, port))
-                        logfile <<"Server run failed" << std::endl;
+                        printf("Server run failed\n");
                     return;
                 }
             }
             catch (const std::exception &e)
             {
-                logfile << "Init failed in try " << i + 1 << ": " << e.what() << std::endl;
+                printf("Init failed: %s\n", e.what());
             }
             std::this_thread::sleep_for(std::chrono::seconds(1));
         } });
